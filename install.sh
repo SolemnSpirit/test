@@ -8,7 +8,7 @@
 #======================================================================================
 
 if [ ! -d /home/pi/RetroPie/retropiemenu/gpitools ]; then
-  mkdir -p /home/pi/RetroPie/retropiemenu/gpitools;
+  sudo mkdir -p /home/pi/RetroPie/retropiemenu/gpitools;
 fi
 
 (
