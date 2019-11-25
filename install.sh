@@ -13,7 +13,7 @@ sudo sed -i '$ d' /opt/retropie/configs/all/emulationstation/gamelists/retropie/
 {
 echo "<game>" ;	
 echo "<path>./gpitools/GPFS.sh</path>";	
-echo "<name>Frontend Switcher</name>";	
+echo "<name>GPi Frontend Switcher</name>";	
 echo "<desc>Easily switch between EmulationStation and Pegasus as your frontend - by SolemnSpirit.</desc>";	
 echo "<image>./icons/GPFS.png</image>";	
 echo "</game>" ;
