@@ -32,7 +32,6 @@ function main_menu() {
         case "$Menu_Options" in
             EmulationStation) EmulationStation ;;
             Pegasus) Pegasus ;;
-            $DIALOG_HELP) echo "Help pressed." ;;
             *) break ;;
         esac
     done
