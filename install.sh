@@ -12,7 +12,7 @@ sudo curl https://raw.githubusercontent.com/SolemnSpirit/test/master/GPFS.png --
 sudo sed -i '$ d' /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml
 {
 echo "<game>" ;	
-echo "<path>./gpitools/GPi-Frontend-Switcher/frontend-switcher.sh</path>";	
+echo "<path>./gpitools/GPFS.sh</path>";	
 echo "<name>Frontend Switcher</name>";	
 echo "<desc>Easily switch between EmulationStation and Pegasus as your frontend - by SolemnSpirit.</desc>";	
 echo "<image>./icons/GPFS.png</image>";	
