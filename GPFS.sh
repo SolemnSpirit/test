@@ -9,13 +9,13 @@
 #usage:         ./Frontend-Switcher.sh
 #======================================================================================
 
-if [ ! -f "/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc" ]
+if [ ! -f "/home/pi/RetroPie/retropiemenu/gpitools/GPFS.dialogrc" ]
 then
-    dialog --create-rc "/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc"
+    dialog --create-rc "/home/pi/RetroPie/retropiemenu/gpitools/GPFS.dialogrc"
 fi
 
 # General Declarations
-export DIALOGRC="/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc"
+export DIALOGRC="/home/pi/RetroPie/retropiemenu/gpitools/GPFS.dialogrc"
 #echo $TERM
 #sleep 20s
 
