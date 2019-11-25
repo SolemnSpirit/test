@@ -140,7 +140,7 @@ function Pegasus() {
         echo 100; echo "XXX"; echo "Done !"; echo "XXX" ;
         sleep 1s ;
     ) | dialog --hline "  GPi Case Users  " --backtitle "Switching to ${FUNCNAME[0]}..." --gauge "Switching to "${FUNCNAME[0]}"" 6 50
-
+YesNoPrompt "Reboot required" "  GPi Case Users  " "Now" "Later" "\nA reboot is required for the changes to take effect.\n\nDo you want to do this now?" "exit" "sudo reboot"
     fi
 }
 
