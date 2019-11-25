@@ -8,7 +8,7 @@
 #======================================================================================
 
 (
-sudo curl https://raw.githubusercontent.com/SolemnSpirit/test/master/GPFS.png --output /home/pi/RetroPie/retropiemenu/icons/GPFS.png > /dev/null 2>&1 | echo 25; echo "XXX"; echo "Installing GPFS"; echo "XXX" ;
+sudo curl -O --create-dirs https://raw.githubusercontent.com/SolemnSpirit/test/master/GPFS.png --output /home/pi/RetroPie/retropiemenu/icons/GPFS.png > /dev/null 2>&1 | echo 25; echo "XXX"; echo "Installing GPFS"; echo "XXX" ;
 sudo sed -i '$ d' /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml
 {
 echo "<game>" ;	
