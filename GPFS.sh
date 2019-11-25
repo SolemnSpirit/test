@@ -11,29 +11,28 @@
 
 if [ ! -f "/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc" ]
 then
-
-dialog --create-rc "/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc"
+    dialog --create-rc "/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc"
 fi
 
 # General Declarations
 export DIALOGRC="/home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/GPFS.dialogrc"
 #echo $TERM
-sleep 20s
+#sleep 20s
 
 function main_menu() {
- while true; do
- tput civis 
-        Menu_Options=$(dialog --begin 3 1 --no-shadow \
-	    --title " GPi FRONTEND SWITCHER " --hline "  GPi Case Users  " --backtitle "Main Menu"  \
-            --ok-label Select --cancel-label Cancel \
-            --menu "\nSelect an option:\n\n" 26 38 20\
-            1 "EmulationStation" \
-            2 "Pegasus" \
-            2>&1 > /dev/tty)
+    while true; do
+        tput civis
+        Menu_Options=$(dialog --help-button --help-label "test" --item-help  --begin 1 1 --no-shadow \
+	    --title " GPi FRONTEND SWITCHER " --hline "  GPi Case Users  "   \
+        --ok-label "Select" --cancel-label "Cancel" --menu "\nSelect an option:\n\n\n" 26 38 20\
+        EmulationStation "" "Set EmulationStation as your frontend" \
+        Pegasus "" "Set Pegasus as your frontend" \
+        2>&1 > /dev/tty)
 
         case "$Menu_Options" in
-            1)EmulationStation  ;;
-            2)Pegasus  ;;
+            EmulationStation) EmulationStation ;;
+            Pegasus) Pegasus ;;
+            $DIALOG_HELP) echo "Help pressed." ;;
             *) break ;;
         esac
     done
@@ -41,89 +40,121 @@ function main_menu() {
 
 function EmulationStation() {
     tput civis
-    Frontend_Name="${FUNCNAME[0]}"
-    #Check autostart.sh for EmulationStation
+    notify-send "My name is bash and I rock da house"
+    # Check autostart.sh for EmulationStation
     if grep -q emulationstation /opt/retropie/configs/all/autostart.sh; then
     # EmulationStation already set as frontend
-    MessageBox "\Z1\ZbFRONTEND ALREADY SET\Zn" "  GPi Case Users  " "Brought to you by GPi Case Users Group" "\n\n${FUNCNAME[0]} is already set as your frontend.\n\nPress OK to go back to the Retropie menu."
-   
+        MessageBox "\Z1\ZbFRONTEND ALREADY SET\Zn" "  GPi Case Users  " "Brought to you by GPi Case Users Group" "\n\n${FUNCNAME[0]} is already set as your frontend.\n\nPress OK to go back to the Retropie menu."
     else
-
-    # EmulationStation not set
-    ( 
+        # EmulationStation not set
+        (
         # Configure autostart
         sudo sed -i "1 cemulationstation #auto" /opt/retropie/configs/all/autostart.sh | echo 25; echo "XXX"; echo "Configuring autostart"; echo "XXX" ;
         sleep 1s ;
         # Configure safe shutdown
-        sudo rm /opt/RetroFlag/multi_switch.sh | echo 50; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;sleep 1s ; 
+        sudo rm /opt/RetroFlag/multi_switch.sh | echo 50; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;sleep 1s ;
         sleep 1s ;
-        sudo cp /home/pi/RetroPie/retropiemenu/gpitools/GPi-Frontend-Switcher/multi_switch_es.sh /opt/RetroFlag/ | echo 75; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;
-        sleep 120s ;  
-        sudo mv /opt/RetroFlag/multi_switch_es.sh /opt/RetroFlag/multi_switch.sh | echo 100; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;
-        sleep 1s ; 
-    ) | dialog --hline "  GPi Case Users  " --backtitle "Switching to ${FUNCNAME[0]}..." --gauge "Switching to "${FUNCNAME[0]}"" 6 50
-
-    YesNoPrompt "Reboot required" "  GPi Case Users  " "Reboot required" "Now" "Later" "\nA reboot is required for the changes to take effect.\n\nDo you want to do this now?" "exit" "sudo reboot"
-
+        sudo curl https://raw.githubusercontent.com/SolemnSpirit/test/master/multi_switch_es.sh --output /opt/RetroFlag/multi_switch.sh > /dev/null 2>&1 | echo 75; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;
+        sleep 1s ;
+        echo 100; echo "XXX"; echo "Done !"; echo "XXX" ;
+        sleep 1s ;
+        ) | dialog --hline "  GPi Case Users  " --backtitle "Switching to ${FUNCNAME[0]}..." --gauge "Switching to "${FUNCNAME[0]}"" 6 50
+        YesNoPrompt "Reboot required" "  GPi Case Users  " "Now" "Later" "\nA reboot is required for the changes to take effect.\n\nDo you want to do this now?" "exit" "sudo reboot"
     fi
-
 }
+
 
 function Pegasus() {
     tput civis
-    Frontend_Name="${FUNCNAME[0]}"
-    #Check autostart.sh for EmulationStation
-
-    #If autostart = EmulationStation then
-    #Tell user EmulationStation already set and quit
-    #If not set then
-
-    ( 
-        sudo sed -i "1 cpegasus-fe --silent &>\/dev\/null #auto" /opt/retropie/configs/all/autostart.sh | echo 20; echo "XXX"; echo "TEST 1"; echo "XXX" ; #Configure autostart.sh
-        sleep 1s ; 
-        sudo sed -i '81 c local ES_PID=\"$(pgrep -f \"\/opt\/retropie\/supplementary\/.*\/pegasus-fe([^.]|$)")\"' /opt/RetroFlag/multi_switch.sh | echo 40; echo "XXX"; echo "TEST 2"; echo "XXX" ; #Configure safe shutdown (switch pegasus to emulationstation)
-        sleep 1s ; 
-        echo 60; echo "XXX"; echo "TEST 3"; echo "XXX" ; #uncomment line 155
-        sleep 1s ;  
-        echo 80; echo "XXX"; echo "TEST 4"; echo "XXX" ; #uncomment line 156
-        sleep 1s ; 
-        echo 100; echo "XXX"; echo "TEST 5"; echo "XXX" ; #delete line 159
+    # Check autostart.sh for Pegasus
+    if grep -q pegasus-fe /opt/retropie/configs/all/autostart.sh; then
+        # Pegasus already set as frontend
+        MessageBox "\Z1\ZbFRONTEND ALREADY SET\Zn" "  GPi Case Users  " "Brought to you by GPi Case Users Group" "\n\n${FUNCNAME[0]} is already set as your frontend.\n\nPress OK to go back to the Retropie menu."
+    else
+        # Pegasus not set
+        echo "Pegasus not set"
+        # Check for Pegasus install   
+        if [ -d "/opt/retropie/configs/all/pegasus-fe" ]; then
+            # Pegasus already installed
+            echo "Pegasus installed"
+            sleep 10s
+        else
+            # Install Pegasus
+            tput civis 
+            cd ~/RetroPie-Setup
+            #dialog --clear
+            test=0
+            sudo ./retropie_packages.sh pegasus-fe |
+            while IFS= read i; do
+                ((++test))
+                test2=$((test*3))
+                if [ $test2 -lt 100 ]
+                then
+                    echo $test2 | dialog --hline "  GPi Case Users  " --backtitle "TESTES..." --gauge "Installing Pegasus" 6 50
+                else
+                    echo 100 | dialog --hline "  GPi Case Users  " --backtitle "TESTES..." --gauge "Installing Pegasus" 6 50
+                fi
+            done
+            sleep 10s
+        fi
+        (
+        # Check for GPiOS
+        if [ -d "/opt/retropie/configs/all/pegasus-fe/themes/pegasus-theme-gpiOS" ]; then
+            # Check for update
+            cd ~/.config/pegasus-frontend/themes/pegasus-theme-gpiOS
+            if ! git diff --quiet remotes/origin/HEAD; then
+            # Prompt to update
+            YesNoPrompt "Update available" "  GPi Case Users  " "Update available" "Now" "Later" "\nAn update is available for GPiOS.\n\nDo you want to install this now?" "git pull" ":"
+            else
+            # No changes
+            :
+            fi
+        else
+        # Install GPiOS
+            tput civis 
+            cd ~/.config/pegasus-frontend/themes/
+            #dialog --clear
+            test=0
+            sudo  git clone --progress https://github.com/SinisterSpatula/pegasus-theme-gpiOS.git --branch master --depth 1 2>&1 | tr '\r' '\n' |
+            while IFS= read i; do
+                ((++test))
+                test2=$((test*3))
+                if [ $test2 -lt 100 ]
+                then
+                    echo $test2 | dialog --hline "  GPi Case Users  " --backtitle "theme TESTES..." --gauge "Installing GPiOS" 6 50
+                else
+                    echo 100 | dialog --hline "  GPi Case Users  " --backtitle "theme TESTES..." --gauge "Installing GPiOS" 6 50
+                fi
+            done
+            sleep 10s
+        fi
+        # Set theme
+        echo "general.theme: themes/pegasus-theme-gpiOS/" > ~/.config/pegasus-frontend/settings.txt | echo 20; echo "XXX"; echo "Setting theme"; echo "XXX" ;
+        # Configure autostart
+        sudo sed -i "1 cpegasus-fe --silent &>\/dev\/null #auto" /opt/retropie/configs/all/autostart.sh | echo 20; echo "XXX"; echo "Configuring autostart"; echo "XXX" ;
+        sleep 1s ;
+        # Configure safe shutdown
+        sudo rm /opt/RetroFlag/multi_switch.sh | echo 50; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;sleep 1s ;
+        sleep 1s ;
+        sudo curl https://raw.githubusercontent.com/SolemnSpirit/test/master/multi_switch_pegasus.sh --output /opt/RetroFlag/multi_switch.sh > /dev/null 2>&1 | echo 75; echo "XXX"; echo "Configuring safe shutdown"; echo "XXX" ;
+        sleep 1s ;
+        echo 100; echo "XXX"; echo "Done !"; echo "XXX" ;
+        sleep 1s ;
     ) | dialog --hline "  GPi Case Users  " --backtitle "Switching to ${FUNCNAME[0]}..." --gauge "Switching to "${FUNCNAME[0]}"" 6 50
 
-
-tput civis 
-cd ~/RetroPie-Setup
-#dialog --clear
-
-test=0
-
-sudo ./retropie_packages.sh pegasus-fe |
-while IFS= read i; do
-((++test))
-test2=$((test*3))
-if [ $test2 -lt 100 ]
-then
-echo $test2 | dialog --hline "  GPi Case Users  " --backtitle "TESTES..." --gauge "TESTES" 6 50
-else
-echo 100 | dialog --hline "  GPi Case Users  " --backtitle "TESTES..." --gauge "TESTES" 6 50
-fi
-done 
-
-sleep 10s
+    fi
 }
 
 function Progress_Bar() {
-    echo $((StepsComplete * 100 / Steps)) | dialog --begin 3 1 --title "$1" --hline "$2" --backtitle "$3" --gauge "$4" 26 38 20    
-} 
+    echo $((StepsComplete * 100 / Steps)) | dialog --begin 3 1 --title "$1" --hline "$2" --backtitle "$3" --gauge "$4" 26 38 20
+}
 
 function YesNoPrompt {
-    if ! dialog --colors --begin 3 1 --title "$1" --hline "$2" \
-        --backtitle "$3" --yes-label "$4" --no-label "$5" \
-        --yesno "$6" 26 38 20>&1 > /dev/tty
+    if ! dialog --colors --begin 3 1 --title "$1" --hline "$2" --yes-label "$3" --no-label "$4" --yesno "$5" 26 38 20>&1 > /dev/tty
     then
-    	eval "$7" > /dev/null 2>&1
+        eval "$6" > /dev/null 2>&1
     else
-    	eval "$8" > /dev/null 2>&1
+    	eval "$7" > /dev/null 2>&1
     fi
 }
 
